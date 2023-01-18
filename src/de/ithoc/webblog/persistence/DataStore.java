@@ -1,7 +1,6 @@
 package de.ithoc.webblog.persistence;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import de.ithoc.webblog.model.Post;
 
@@ -10,46 +9,37 @@ import de.ithoc.webblog.model.Post;
  */
 public class DataStore {
     
-    private Map<Integer, Post> map = new HashMap<>();
+    private HashMap<Integer, Post> map = new HashMap<>();
 
     /* Store last maximum index to ensure IDs are unique. */
-    private Integer maxIndex = 0;
+    private Integer lastId = 0;
 
 
-    /**
-     * Saves a new post object for which the id is unset.
-     * In case the ID is already set, nothing happens and
-     * the post object will just be returned.
-     * 
-     * @param post Newly created post object to be saved.
-     */
-    public Post save(Post post) {
-        if(post.getId() != null) {
-            return post;
-        }
+    public Integer nextId() {
+        lastId = lastId + 1;
+        return lastId;
+    }
 
-        maxIndex = maxIndex + 1; // equivalent: maxIndex++
-        post.setId(maxIndex);
+    public Post create(Post post) {
+        post.setId(nextId());
         map.put(post.getId(), post);
-
+        
         return post;
     }
-    
-    public Post get(Integer id) {
+
+    public Post read(Integer id) {
+
         return map.get(id);
     }
 
-
-    /**
-     * Updates a given post object in the storage. In case 
-     * the ID is unset, no update will take place and 
-     * the post object is just returned as is.
-     */
     public Post update(Post post) {
+        map.put(post.getId(), post);
+        
+        return post;
+    }
 
-        // TODO Implement this update method.
-
-        return null;
+    public void delete(Integer id) {
+        map.remove(id);
     }
 
 }
